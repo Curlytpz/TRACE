@@ -1,0 +1,12 @@
+import { Router } from 'express';
+import { getPrisma } from '../db.js';
+import { asyncHandler, AppError } from '../errors.js';
+import { idParams } from '../validation.js';
+import { getIngestionStatus, ingestKnowledgeSource } from '../services/ingestion/ingestKnowledgeSource.js';
+import { embedKnowledgeSource, getEmbeddingStatus } from '../services/embeddings/embedKnowledgeSource.js';
+export const knowledgeIngestionRouter = Router({ mergeParams: true });
+knowledgeIngestionRouter.post('/ingest', asyncHandler(async (request, response) => { const { id } = idParams.parse(request.params); response.json(await ingestKnowledgeSource(id)); }));
+knowledgeIngestionRouter.get('/chunks', asyncHandler(async (request, response) => { const { id } = idParams.parse(request.params); const source = await getPrisma().knowledgeSource.findUnique({ where: { id }, select: { id: true } }); if (!source) throw new AppError(404, 'Knowledge source not found.'); const items = await getPrisma().knowledgeChunk.findMany({ where: { knowledgeSourceId: id }, orderBy: { chunkIndex: 'asc' } }); response.json({ items, offsetUnit: 'UTF-16 code units' }); }));
+knowledgeIngestionRouter.get('/ingestion-status', asyncHandler(async (request, response) => { const { id } = idParams.parse(request.params); response.json(await getIngestionStatus(id)); }));
+knowledgeIngestionRouter.post('/embed', asyncHandler(async (request, response) => { const { id } = idParams.parse(request.params); response.json(await embedKnowledgeSource(id)); }));
+knowledgeIngestionRouter.get('/embedding-status', asyncHandler(async (request, response) => { const { id } = idParams.parse(request.params); response.json(await getEmbeddingStatus(id)); }));

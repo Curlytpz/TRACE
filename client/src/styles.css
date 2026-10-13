@@ -1,0 +1,26 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  * { @apply border-slate-200 dark:border-slate-800; }
+  body { @apply m-0 min-w-[320px] bg-slate-50 font-sans antialiased dark:bg-slate-950; }
+  button, input, textarea { font: inherit; }
+  button { @apply transition duration-150; }
+  input, textarea { @apply text-slate-950 dark:text-slate-50; }
+}
+@layer components {
+  .nav-item { @apply flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium text-slate-500 hover:bg-slate-100 hover:text-slate-900 dark:text-slate-400 dark:hover:bg-slate-800 dark:hover:text-slate-100 md:mb-1 md:w-full; }
+  .nav-item-active { @apply bg-emerald-50 text-emerald-800 dark:bg-emerald-500/10 dark:text-emerald-300; }
+  .icon-button { @apply grid h-9 w-9 place-items-center rounded-lg border border-slate-200 text-slate-600 hover:bg-slate-100 dark:border-slate-700 dark:text-slate-300 dark:hover:bg-slate-800; }
+  .primary-button { @apply inline-flex items-center justify-center gap-2 rounded-lg bg-accent-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-accent-500 focus:outline-none focus:ring-2 focus:ring-accent-500 focus:ring-offset-2 dark:focus:ring-offset-slate-950; }
+  .secondary-button { @apply rounded-lg border border-slate-300 px-3 py-2 text-sm font-medium text-slate-700 hover:bg-slate-100 dark:border-slate-700 dark:text-slate-200 dark:hover:bg-slate-800; }
+  .panel { @apply rounded-2xl border border-slate-200 bg-white p-5 shadow-panel dark:border-slate-800 dark:bg-slate-900; }
+  .eyebrow { @apply text-xs font-bold uppercase tracking-[0.16em] text-accent-600 dark:text-accent-400; }
+  .badge { @apply rounded-full bg-slate-100 px-2.5 py-1 text-xs font-medium text-slate-600 dark:bg-slate-800 dark:text-slate-300; }
+  .field-label { @apply block text-sm font-medium text-slate-700 dark:text-slate-200; }
+  .field { @apply mt-2 block w-full rounded-lg border border-slate-300 bg-white px-3 py-2.5 text-sm outline-none placeholder:text-slate-400 focus:border-accent-500 focus:ring-2 focus:ring-accent-500/20 dark:border-slate-700 dark:bg-slate-950; }
+  .success-banner { @apply flex gap-3 rounded-xl border border-accent-500/30 bg-accent-50 p-4 text-sm text-emerald-900 dark:bg-emerald-500/10 dark:text-emerald-100; }
+  .error-banner { @apply rounded-xl border border-rose-500/30 bg-rose-50 p-4 text-sm text-rose-900 dark:bg-rose-500/10 dark:text-rose-100; }
+  .empty-state { @apply flex min-h-[360px] flex-col items-center justify-center rounded-2xl border border-dashed border-slate-300 bg-white p-8 text-center dark:border-slate-700 dark:bg-slate-900; }
+}

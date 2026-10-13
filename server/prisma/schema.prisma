@@ -1,0 +1,102 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum InvestigationStatus {
+  OPEN
+  IN_PROGRESS
+  RESOLVED
+  ARCHIVED
+}
+
+enum KnowledgeSourceType {
+  DOCUMENTATION
+  ERROR_LOG
+  DEVELOPER_NOTE
+  INCIDENT
+  REPOSITORY
+}
+
+model Investigation {
+  id             String                @id @default(uuid()) @db.Uuid
+  title          String                @db.VarChar(200)
+  description    String
+  errorLogs      String?
+  technologyTags String[]
+  status         InvestigationStatus   @default(OPEN)
+  createdAt      DateTime              @default(now())
+  updatedAt      DateTime              @updatedAt
+  evidence       InvestigationEvidence[]
+
+  @@index([status])
+  @@index([createdAt])
+}
+
+model KnowledgeSource {
+  id                  String                @id @default(uuid()) @db.Uuid
+  title               String                @db.VarChar(200)
+  sourceType          KnowledgeSourceType
+  content             String
+  originUrl           String?
+  ingestedContentHash String?               @db.Char(64)
+  createdAt           DateTime              @default(now())
+  updatedAt           DateTime              @updatedAt
+  evidence            InvestigationEvidence[]
+  chunks              KnowledgeChunk[]
+
+  @@index([sourceType])
+  @@index([createdAt])
+}
+
+model KnowledgeChunk {
+  id                String          @id @default(uuid()) @db.Uuid
+  knowledgeSourceId String          @db.Uuid
+  chunkIndex        Int
+  content           String
+  contentHash       String          @db.Char(64)
+  startOffset       Int
+  endOffset         Int
+  sectionHeading    String?
+  createdAt         DateTime        @default(now())
+  updatedAt         DateTime        @updatedAt
+  knowledgeSource   KnowledgeSource @relation(fields: [knowledgeSourceId], references: [id], onDelete: Cascade)
+  embedding         KnowledgeChunkEmbedding?
+
+  @@unique([knowledgeSourceId, chunkIndex])
+  @@index([knowledgeSourceId])
+}
+
+model KnowledgeChunkEmbedding {
+  id           String          @id @default(uuid()) @db.Uuid
+  chunkId      String          @unique @db.Uuid
+  provider     String          @db.VarChar(50)
+  model        String          @db.VarChar(200)
+  dimensions   Int
+  values       Json
+  contentHash  String          @db.Char(64)
+  embeddedAt   DateTime        @default(now())
+  createdAt    DateTime        @default(now())
+  updatedAt    DateTime        @updatedAt
+  chunk        KnowledgeChunk  @relation(fields: [chunkId], references: [id], onDelete: Cascade)
+
+  @@index([provider, model, dimensions])
+  @@index([contentHash])
+}
+
+model InvestigationEvidence {
+  id                String          @id @default(uuid()) @db.Uuid
+  investigationId   String          @db.Uuid
+  knowledgeSourceId String          @db.Uuid
+  note              String?
+  createdAt         DateTime        @default(now())
+  investigation     Investigation   @relation(fields: [investigationId], references: [id], onDelete: Cascade)
+  knowledgeSource   KnowledgeSource @relation(fields: [knowledgeSourceId], references: [id], onDelete: Cascade)
+
+  @@unique([investigationId, knowledgeSourceId])
+  @@index([knowledgeSourceId])
+}
