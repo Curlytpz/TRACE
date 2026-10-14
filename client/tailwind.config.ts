@@ -5,7 +5,7 @@ export default {
   darkMode: 'class',
   theme: {
     extend: {
-      colors: { accent: { 50: '#ecfdf5', 400: '#34d399', 500: '#10b981', 600: '#059669' } },
+      colors: { accent: { 50: '#f5f3ff', 400: '#a78bfa', 500: '#8b5cf6', 600: '#6d28d9' } },
       boxShadow: { panel: '0 1px 2px rgb(15 23 42 / 0.06), 0 12px 30px rgb(15 23 42 / 0.05)' },
     },
   },
